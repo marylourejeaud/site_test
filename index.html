@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bac à Sable QA - Piano Analytics</title>
+
+    <script>
+    (function (_config) {
+      var script = document.createElement("script");
+      script.src = "https://tag.aticdn.net/piano-analytics.js";
+      script.async = true;
+      script.dataset.config = JSON.stringify(_config);
+      document.head.appendChild(script);
+    })({
+      site: 123456789, // À remplacer par ton Site ID
+      collectDomain: "https://xxxxxxx.pa-cd.com", // À remplacer par ton domaine de collecte
+      instantTracking: true,
+      consentDefaultMode: "opt-in", // Mode par défaut au chargement
+    });
+    </script>
+    
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .btn-group { margin: 20px 0; padding: 15px; border: 1px solid #ccc; background: #f9f9f9; }
+        button { margin-right: 10px; padding: 8px 15px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h1>Environnement de Test Piano Analytics</h1>
+    <p>Cette page permet de valider la bonne intégration du tag et les changements d'états de consentement.</p>
+
+    <div class="btn-group">
+        <h2>Tester les modes de consentement</h2>
+        <button id="btn-optin">Mode Opt-in (Tout accepter)</button>
+        <button id="btn-essential">Mode Essential (Exempté)</button>
+        <button id="btn-optout">Mode Opt-out (Tout refuser)</button>
+    </div>
+
+    <div class="btn-group">
+        <h2>Tester les événements</h2>
+        <button id="btn-test">Générer un clic de test</button>
+    </div>
+
+    <script>
+        // Définition d'un visitor ID de test pour ta fonction
+        const visitorId = "test_user_12345";
+
+        // Ta fonction de mise à jour du consentement
+        function setConsentMode(mode) {
+            if (!window.pa || !window.pa.consent || !window.pa.consent.setMode) {
+                console.warn("No Piano consent API available for mode:", mode);
+                return false;
+            }
+
+            window.pa.consent.setMode(mode);
+            if (typeof window.pa.setVisitorId === "function") {
+                window.pa.setVisitorId(visitorId);
+            }
+            
+            console.log(`Le mode de consentement est passé en : ${mode}`);
+            return true;
+        }
+
+        window.setConsentMode = setConsentMode;
+
+        // Attendre que le DOM soit chargé pour lier les boutons
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // --- Écouteurs pour les boutons de consentement ---
+            document.getElementById('btn-optin').addEventListener('click', function() {
+                setConsentMode('opt-in');
+            });
+
+            document.getElementById('btn-essential').addEventListener('click', function() {
+                setConsentMode('essential');
+            });
+
+            document.getElementById('btn-optout').addEventListener('click', function() {
+                setConsentMode('opt-out');
+            });
+
+            // --- Écouteur pour le bouton de test de clic ---
+            document.getElementById('btn-test').addEventListener('click', function() {
+                if (typeof pa !== 'undefined') {
+                    pa.sendEvent('click.action', {
+                        'click': 'bouton_test_qa',
+                        'click_chapter1': 'bac_a_sable',
+                        'click_chapter2': 'consulting'
+                    });
+                    console.log("Événement 'click.action' déclenché avec succès !");
+                } else {
+                    console.error("Le SDK Piano Analytics n'est pas encore initialisé.");
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
