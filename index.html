@@ -13,10 +13,10 @@
       script.dataset.config = JSON.stringify(_config);
       document.head.appendChild(script);
     })({
-      site: 123456789, // À remplacer par ton Site ID
-      collectDomain: "https://xxxxxxx.pa-cd.com", // À remplacer par ton domaine de collecte
+      site: 123456789, 
+      collectDomain: "https://xxxxxxx.pa-cd.com", 
       instantTracking: true,
-      consentDefaultMode: "opt-in", // Mode par défaut au chargement
+      consentDefaultMode: "opt-in", 
     });
     </script>
     
@@ -24,6 +24,15 @@
         body { font-family: sans-serif; padding: 20px; }
         .btn-group { margin: 20px 0; padding: 15px; border: 1px solid #ccc; background: #f9f9f9; }
         button { margin-right: 10px; padding: 8px 15px; cursor: pointer; }
+
+        /* Style pour positionner l'image Marvin en bas à droite */
+        .marvin-fixed {
+            position: fixed;   /* Fixe l'image par rapport à la fenêtre du navigateur */
+            bottom: 20px;      /* Distance par rapport au bas */
+            right: 20px;       /* Distance par rapport à la droite */
+            max-width: 150px;  /* Taille maximum de l'image (ajustable) */
+            z-index: 1000;     /* S'assure que l'image passe au-dessus des autres éléments */
+        }
     </style>
 </head>
 <body>
@@ -43,45 +52,36 @@
         <button id="btn-test">Générer un clic de test</button>
     </div>
 
+    <img src="Marvin.png" alt="Marvin" class="marvin-fixed">
+
     <script>
-        // Définition d'un visitor ID de test pour ta fonction
         const visitorId = "test_user_12345";
 
-        // Ta fonction de mise à jour du consentement
         function setConsentMode(mode) {
             if (!window.pa || !window.pa.consent || !window.pa.consent.setMode) {
                 console.warn("No Piano consent API available for mode:", mode);
                 return false;
             }
-
             window.pa.consent.setMode(mode);
             if (typeof window.pa.setVisitorId === "function") {
                 window.pa.setVisitorId(visitorId);
             }
-            
             console.log(`Le mode de consentement est passé en : ${mode}`);
             return true;
         }
 
         window.setConsentMode = setConsentMode;
 
-        // Attendre que le DOM soit chargé pour lier les boutons
         document.addEventListener('DOMContentLoaded', function() {
-            
-            // --- Écouteurs pour les boutons de consentement ---
             document.getElementById('btn-optin').addEventListener('click', function() {
                 setConsentMode('opt-in');
             });
-
             document.getElementById('btn-essential').addEventListener('click', function() {
                 setConsentMode('essential');
             });
-
             document.getElementById('btn-optout').addEventListener('click', function() {
                 setConsentMode('opt-out');
             });
-
-            // --- Écouteur pour le bouton de test de clic ---
             document.getElementById('btn-test').addEventListener('click', function() {
                 if (typeof pa !== 'undefined') {
                     pa.sendEvent('click.action', {
@@ -89,13 +89,9 @@
                         'click_chapter1': 'bac_a_sable',
                         'click_chapter2': 'consulting'
                     });
-                    console.log("Événement 'click.action' déclenché avec succès !");
-                } else {
-                    console.error("Le SDK Piano Analytics n'est pas encore initialisé.");
                 }
             });
         });
     </script>
-
 </body>
 </html>
