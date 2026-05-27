@@ -13,8 +13,8 @@
       script.dataset.config = JSON.stringify(_config);
       document.head.appendChild(script);
     })({
-      site: 648852, 
-      collectDomain: "https://fjqqzhr.pa-cd.com", 
+      site: 123456789, 
+      collectDomain: "https://xxxxxxx.pa-cd.com", 
       instantTracking: true,
       consentDefaultMode: "opt-in", 
     });
@@ -25,6 +25,7 @@
         .btn-group { margin: 20px 0; padding: 15px; border: 1px solid #ccc; background: #f9f9f9; }
         button { margin-right: 10px; padding: 8px 15px; cursor: pointer; }
 
+        /* Style pour positionner l'image Marvin en bas à droite */
         .marvin-fixed {
             position: fixed;
             bottom: 20px;
@@ -101,16 +102,30 @@
             document.getElementById('btn-play').addEventListener('click', function() {
                 if (typeof pa !== 'undefined' && pa.avInsights) {
                     
-                    const myMedia = new pa.avInsights.Media(5, 5);
+                    // 1. Définition des paramètres pour l'instanciation
+                    var heartbeatDuration = 5;
+                    var bufferingHeartbeatDuration = 5;
+                    var sessionId = 'session_video_abc123'; 
                     
-                    myMedia.play(0, {
-                        'av_content_id': 'video_qa_01', 
-                        'av_content_type': 'video',
-                        'av_title': 'Vidéo de Démo QA',
-                        'av_content_duration': 120000 
-                    });
+                    // 2. Instanciation de l'objet Media
+                    var myMedia = new pa.avInsights.Media(
+                        heartbeatDuration,
+                        bufferingHeartbeatDuration,
+                        sessionId
+                    );
                     
-                    console.log("Événement 'av.play' envoyé !");
+                    // 3. Création du dictionnaire de propriétés
+                    var properties = {
+                        'av_content_id': 'video_qa_01'
+                    };
+                    
+                    // 4. Ajout des propriétés via setProps
+                    myMedia.setProps(properties);
+                    
+                    // 5. Déclenchement de l'événement play
+                    myMedia.play(0);
+                    
+                    console.log("Événement 'av.play' envoyé en utilisant setProps !");
                 } else {
                     console.warn("Le module AV Insights n'est pas chargé ou l'objet 'pa' est indisponible.");
                 }
