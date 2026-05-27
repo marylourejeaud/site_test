@@ -25,13 +25,12 @@
         .btn-group { margin: 20px 0; padding: 15px; border: 1px solid #ccc; background: #f9f9f9; }
         button { margin-right: 10px; padding: 8px 15px; cursor: pointer; }
 
-        /* Style pour positionner l'image Marvin en bas à droite */
         .marvin-fixed {
-            position: fixed;   /* Fixe l'image par rapport à la fenêtre du navigateur */
-            bottom: 20px;      /* Distance par rapport au bas */
-            right: 20px;       /* Distance par rapport à la droite */
-            max-width: 150px;  /* Taille maximum de l'image (ajustable) */
-            z-index: 1000;     /* S'assure que l'image passe au-dessus des autres éléments */
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            max-width: 150px;
+            z-index: 1000;
         }
     </style>
 </head>
@@ -50,6 +49,7 @@
     <div class="btn-group">
         <h2>Tester les événements</h2>
         <button id="btn-test">Générer un clic de test</button>
+        <button id="btn-play">▶️ Tester 'av.play'</button>
     </div>
 
     <img src="Marvin.png" alt="Marvin" class="marvin-fixed">
@@ -73,6 +73,8 @@
         window.setConsentMode = setConsentMode;
 
         document.addEventListener('DOMContentLoaded', function() {
+            
+            // --- Consentement ---
             document.getElementById('btn-optin').addEventListener('click', function() {
                 setConsentMode('opt-in');
             });
@@ -82,6 +84,8 @@
             document.getElementById('btn-optout').addEventListener('click', function() {
                 setConsentMode('opt-out');
             });
+            
+            // --- Événements Standards ---
             document.getElementById('btn-test').addEventListener('click', function() {
                 if (typeof pa !== 'undefined') {
                     pa.sendEvent('click.action', {
@@ -89,8 +93,29 @@
                         'click_chapter1': 'bac_a_sable',
                         'click_chapter2': 'consulting'
                     });
+                    console.log("Événement 'click.action' envoyé !");
                 }
             });
+
+            // --- Événements AV Insights (Médias) ---
+            document.getElementById('btn-play').addEventListener('click', function() {
+                if (typeof pa !== 'undefined' && pa.avInsights) {
+                    
+                    const myMedia = new pa.avInsights.Media(5, 5);
+                    
+                    myMedia.play(0, {
+                        'av_content_id': 'video_qa_01', 
+                        'av_content_type': 'video',
+                        'av_title': 'Vidéo de Démo QA',
+                        'av_content_duration': 120000 
+                    });
+                    
+                    console.log("Événement 'av.play' envoyé !");
+                } else {
+                    console.warn("Le module AV Insights n'est pas chargé ou l'objet 'pa' est indisponible.");
+                }
+            });
+
         });
     </script>
 </body>
